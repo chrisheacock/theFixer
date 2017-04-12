@@ -10,7 +10,7 @@ import subprocess
 # Edit options here ##################################################
 outmode = 'mp4'                          #Extension of file
 remover = True                           # Delete original file after conversion complete
-accept_ext = 'mp4 mkv avi divx m4v mpeg mpg wmv'   #Extensions of video files to convert
+accept_ext = '3gp mov mp4 mkv avi divx m4v mpeg mpg wmv'   #Extensions of video files to convert
 
 temp_path = "/tmp"                #Directory for encode prior to moving back
 ffmpeg_exe = "ffmpeg"                #Path to ffmpeg executable
@@ -84,7 +84,7 @@ print("Your FFMpeg is OK\nEntering File Processing\n")
 subtitle_languages = subtitle_languages.lower()
 
 def process_file(path, file):
-    extension = os.path.splitext(file)[1].replace(".", "")
+    extension = os.path.splitext(file)[1].replace(".", "").lower()
     filename = os.path.splitext(file)[0]
 
     if extension in accept_ext:
