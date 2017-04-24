@@ -206,7 +206,7 @@ def process_file(path, file):
 def process_directory(path):
     if os.path.isfile(os.path.join(path, ".noconvert")):
         return
-    for file in os.listdir(path):
+    for file in sorted(os.listdir(path)):
         filepath = os.path.join(path, file)
         if os.path.isdir(filepath):
             process_directory(filepath)
