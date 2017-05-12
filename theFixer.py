@@ -94,7 +94,12 @@ def process_file(path, file):
         return
 
     if ffprobe_exe:
-        file_info = subprocess.check_output([ffprobe_exe, os.path.join(path, file)], stderr=subprocess.STDOUT)
+        try:
+            file_info = subprocess.check_output([ffprobe_exe, os.path.join(path, file)], stderr=subprocess.STDOUT)
+        except Exception as file_info_ex:
+            print("File " + file + " is unable to be converted. Adding .PROBE_FAIL to file")
+            shutil.move(os.path.join(path, filename + "." + extension), os.path.join(path, filename + "." + extension + ".PROBE_FAIL"))
+            return
     else:
         file_info = ffmpeg("-i", os.path.join(path, file))
 
