@@ -24,7 +24,7 @@ crf = "18"                               #Video quality for libx264
 vbr = ''                                 #Audio quality
 extract_subtitle = True                  #Extract subtitles?
 subtitle_languages = "en eng english"    #Codes for languages to extract
-threads = 16                             #Number of threads to use in ffmpeg, 0 defaults to all
+threads = 0                             #Number of threads to use in ffmpeg, 0 defaults to all
 additional_ffmpeg = '-preset slow -movflags +faststart'     #Additional flags for ffmpeg, preset sets speed and compression, movflags to make file web optimized
 
 ## END OPTIONS - DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ##
