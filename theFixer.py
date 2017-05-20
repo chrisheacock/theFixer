@@ -125,13 +125,16 @@ def process_file(path, file):
         shutil.move(os.path.join(path, filename + "." + extension), os.path.join(path, filename + "." + extension + ".PROBE_FAIL"))
         return
 
+    vcodec = ''
+    acodec = ''
     encode_crf = []
+
     for vs in metaData["streams"]:
         if "codec_type" in vs and vs["codec_type"] == "video":
             if vs["codec_name"] == video_type:
                 vcodec = 'copy'
                 print("Video in stream " + str(vs["index"]) + " is " + video_type + ", no conversion needed...")
-            else:
+            elif vs["codec_name"] != 'mjpeg':
                 vcodec = video_codec
                 if crf:
                     encode_crf = ["-crf", "" + crf]
@@ -140,7 +143,7 @@ def process_file(path, file):
     encode_dif = []
     for vs in metaData["streams"]:
         if "codec_type" in vs and vs["codec_type"] == "video":
-            if "pix_fmt" in vs and vs["pix_fmt"].find("top first") != -1:
+            if "field_order" in vs and vs["field_order"].find("progressive") == -1:
                 if deinterlace_ffmpeg:
                     encode_dif = ["-vf", "" + deinterlace_ffmpeg]
                 print("Video in stream " + str(vs["index"]) + " is interlaced, deinterlacing...")
