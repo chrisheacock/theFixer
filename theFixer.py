@@ -142,7 +142,7 @@ def process_file(path, file):
 
     encode_dif = []
     for vs in metaData["streams"]:
-        if "codec_type" in vs and vs["codec_type"] == "video":
+        if "codec_type" in vs and vs["codec_type"] == "video" and vcodec != 'copy':
             if "field_order" in vs and vs["field_order"].find("progressive") == -1:
                 if deinterlace_ffmpeg:
                     encode_dif = ["-vf", "" + deinterlace_ffmpeg]
