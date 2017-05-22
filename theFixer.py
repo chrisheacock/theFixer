@@ -17,9 +17,9 @@ remover = True                                                      #Delete orig
 accept_ext = '3gp flv mov mp4 mkv avi divx m4v mpeg mpg wmv ts'     #Extensions of video files to convert
 
 temp_path = "/tmp"                                          #Directory for encode prior to moving back
-mkvextract_exe = "mkvextract"                               #Path to mkvextract executable
-atomicparsely_exe = "AtomicParsley"                         #Path to AtomicParsley executable
-mkvpropedit_exe = "mkvpropedit"                             #Path to mkvpropedit executable
+mkvextract_exe = "/usr/bin/mkvextract"                               #Path to mkvextract executable
+atomicparsely_exe = "/usr/bin/AtomicParsley"                         #Path to AtomicParsley executable
+mkvpropedit_exe = "/usr/bin/mkvpropedit"                             #Path to mkvpropedit executable
 
 strip_title = True                                          #Strip 'Title' field from metadata
 video_codec = 'libx264'                                     #Video codec to use
