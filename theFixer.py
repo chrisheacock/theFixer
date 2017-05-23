@@ -110,6 +110,7 @@ def process_file(path, file):
         print(file + " is not an acceptable extension. Skipping...")
         return
 
+    print('Processing Started: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
     try:
         tup_resp = ffmpy.FFprobe(
             inputs={os.path.join(path, file): None},
@@ -170,7 +171,7 @@ def process_file(path, file):
             print(striptitle_out)
         return
 
-    print("Using video codec: " + vcodec + " audio codec: " + acodec + " and Container format " + outformat + " for\nFile: " + file + "\nStarting Conversion...\n")
+    print("Using video codec: " + vcodec + " audio codec: " + acodec + " and Container format " + outformat + " for " + file)
     print("Duration of current video: " + "{:0>8}".format(datetime.timedelta(seconds=float(metaData["format"]["duration"]))))
     
     filename = filename.replace("XVID", video_type)
@@ -208,8 +209,6 @@ def process_file(path, file):
             print("Removing title metadata...")
             striptitle_out = subprocess.check_output([atomicparsely_exe, os.path.join(path, filename + '.' + outmode),'--title','','--comment','','--overWrite'],stderr=subprocess.STDOUT)
             print(striptitle_out)
-
-        print("")
 
     except Exception as e:
         print("Error: %s" % e)
@@ -257,6 +256,8 @@ def process_file(path, file):
     if remover and filename + '.' + outmode != file:
         print("Deleting original file: " + file)
         os.remove(os.path.join(path, file))
+    
+    print('Processing Started: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
 
 
 def process_directory(path):
