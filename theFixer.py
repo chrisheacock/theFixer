@@ -36,6 +36,14 @@ deinterlace_ffmpeg = 'yadif'                                #Deinterlacing optio
 
 ## END OPTIONS - DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ##
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+         return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+         return False
+    else:
+         raise argparse.ArgumentTypeError('Boolean value expected.')
+                                        
 class color:
    PURPLE = '\033[95m'
    CYAN = '\033[96m'
@@ -51,6 +59,7 @@ class color:
 parser = argparse.ArgumentParser(description='Simple mp4 converter')
 parser.add_argument('-i','--input', help='Input file name/path', required=True)
 parser.add_argument('-m','--mode',help='Processing mode', choices=['quality', 'speed'], required=True)
+parser.add_argument('-f','--force', type=str2bool, nargs='?', const=True, default=False, help="Force reprocess")
 args = parser.parse_args()
 
 if args.mode == 'speed':
@@ -163,7 +172,7 @@ def process_file(path, file):
                     encode_vbr = ["-vbr", "" + vbr]
                 print("Audio in stream " + str(vs["index"]) + " is currently " + color.BOLD + color.GREEN + vs["codec_name"] + color.END + ". Converting to " + color.BOLD + color.GREEN + audio_type + color.END +"...")
 
-    if extension == outmode and vcodec == 'copy' and acodec == 'copy':
+    if extension == outmode and vcodec == 'copy' and acodec == 'copy' and args.force == False:
         print(file + " is already encoded properly. (" + outmode + " file and " + video_type + " / " + audio_type + ")\nNo conversion needed. Skipping...\n\n")
         if strip_title:
             print("Removing title metadata...")
