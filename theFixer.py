@@ -36,6 +36,12 @@ deinterlace_ffmpeg = 'yadif'                                #Deinterlacing optio
 
 ## END OPTIONS - DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING ##
 
+def move_without_copying_stat(src,dst):
+    old= shutil.copy2
+    shutil.copy2= shutil.copy
+    shutil.move(src,dst)
+    shutil.copy2= old
+                    
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
          return True
@@ -132,7 +138,7 @@ def process_file(path, file):
         metaData = json.loads(tup_resp[0].decode('utf-8'))
     except Exception as file_info_ex:
         print("File " + file + " is unable to be converted. Adding .PROBE_FAIL to file")
-        shutil.move(os.path.join(path, filename + "." + extension), os.path.join(path, filename + "." + extension + ".PROBE_FAIL"))
+        move_without_copying_stat(os.path.join(path, filename + "." + extension), os.path.join(path, filename + "." + extension + ".PROBE_FAIL"))
         return
 
     vcodec = ''
@@ -205,14 +211,14 @@ def process_file(path, file):
                 inputs={os.path.join(path, file): None},
                 outputs={os.path.join(temp_path, filename + '.temp'): ffargs}
             ).run(stdout=subprocess.PIPE)
-            shutil.move(os.path.join(temp_path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
+            move_without_copying_stat(os.path.join(temp_path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
         else:
             enc_resp = ffmpy.FFmpeg(
                 global_options='-v quiet -stats',
                 inputs={os.path.join(path, file): None},
                 outputs={os.path.join(path, filename + '.temp'): ffargs}
             ).run(stdout=subprocess.PIPE)
-            shutil.move(os.path.join(path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
+            move_without_copying_stat(os.path.join(path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
 
         if strip_title:
             print("Removing title metadata...")
