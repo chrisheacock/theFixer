@@ -113,7 +113,7 @@ def process_file(path, file):
     extension = os.path.splitext(file)[1].replace(".", "").lower()
     filename = os.path.splitext(file)[0]
 
-    if extension in accept_ext:
+    if extension in accept_ext and extension != "":
         print(file + " is an acceptable extension. Checking file...")
     else:
         print(file + " is not an acceptable extension. Skipping...")
