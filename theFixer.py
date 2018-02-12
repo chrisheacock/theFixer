@@ -251,7 +251,7 @@ def process_file(path, file):
                                 elif mkvextract_exe and 'hdmv_pgs' in m["codec_name"]:
                                     mkvextract_out = subprocess.check_output([mkvextract_exe, 'tracks', os.path.join(path, file),
                                                              str(m["index"]) + ':' + os.path.join(path, filename + '.'
-                                                             + m["tags"]["language"] + '.' + str(m["index"]) + '.sup')],stderr=subprocess.STDOUT)
+                                                             + str(m["index"]) + '.' + m["tags"]["language"] + '.sup')],stderr=subprocess.STDOUT)
                                     continue
                                 else:
                                     sub_format = 'srt'
@@ -259,14 +259,14 @@ def process_file(path, file):
                                 enc_resp = ffmpy.FFmpeg(
                                     global_options='-v quiet -stats',
                                     inputs={os.path.join(path, file): None},
-                                    outputs={os.path.join(path, filename + '.' + m["tags"]["language"] + '.' + str(m["index"]) + sub_ext): ['-y', '-map', '0:' + str(m["index"]), '-c:s:0', sub_format]}
+                                    outputs={os.path.join(path, filename + '.' + str(m["index"]) + '.' + m["tags"]["language"] + sub_ext): ['-y', '-map', '0:' + str(m["index"]), '-c:s:0', sub_format]}
                                 ).run(stdout=subprocess.PIPE)
                                 print("")
                             except Exception as e:
                                 print("Error: %s" % e)
                                 print("Deleting subtitle.")
-                                if os.path.isfile(os.path.join(path, filename + '.' + m["tags"]["language"] + '.' + str(m["index"]) + sub_ext)):
-                                    os.remove(re.escape(os.path.join(path, filename + '.' + m["tags"]["language"] + '.' + str(m["index"]) + sub_ext)))
+                                if os.path.isfile(os.path.join(path, filename + '.' + str(m["index"]) + '.' + m["tags"]["language"] + sub_ext)):
+                                    os.remove(re.escape(os.path.join(path, filename + '.' + str(m["index"]) + '.' + m["tags"]["language"] + sub_ext)))
 
     if remover and filename + '.' + outmode != file:
         print("Deleting original file: " + file)
