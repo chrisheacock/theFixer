@@ -18,7 +18,7 @@ accept_ext = '3gp flv mov mp4 mkv avi divx m4v mpeg mpg wmv ts'     #Extensions 
 
 temp_path = u"/tmp"                                          #Directory for encode prior to moving back
 mkvextract_exe = "/usr/bin/mkvextract"                               #Path to mkvextract executable
-atomicparsely_exe = "/usr/bin/AtomicParsley"                         #Path to AtomicParsley executable
+atomicparsley_exe = "/usr/bin/AtomicParsley"                         #Path to AtomicParsley executable
 mkvpropedit_exe = "/usr/bin/mkvpropedit"                             #Path to mkvpropedit executable
 
 strip_title = True                                          #Strip 'Title' field from metadata
@@ -190,8 +190,8 @@ def process_file(path, file):
         print(file + " is already encoded properly. (" + outmode + " file and " + video_type + " / " + audio_type + ")\nNo conversion needed. Skipping...\n\n")
         if strip_title:
             print("Removing title metadata...")
-            striptitle_out = subprocess.check_output([atomicparsely_exe, os.path.join(path, file),'--title','','--comment','','--overWrite'],stderr=subprocess.STDOUT)
-            print(striptitle_out)
+            striptitle_out = subprocess.check_output([atomicparsley_exe, os.path.join(path, filename + '.' + outmode),'--title','','--comment','','--overWrite'],stderr=subprocess.STDOUT)
+            print("Result: " + striptitle_out.decode('UTF-8'))
         return
 
     print("Using video codec: " + vcodec + " audio codec: " + acodec + " and Container format " + outformat + " for " + file)
@@ -201,50 +201,50 @@ def process_file(path, file):
     filename = filename.replace("xvid", video_type)
     enc_resp = ""
     
-#    try:
-    ffargs = ['-y', '-f', outformat, '-acodec', acodec]
-    if encode_dif:
-        ffargs.extend(encode_dif)
-    ffargs.extend(['-vcodec', vcodec])
-    if encode_crf:
-        ffargs.extend(encode_crf)
-    if additional_ffmpeg:
-        ffargs.extend(additional_ffmpeg.split(" "))
-    if threads:
-        ffargs.extend(['-threads', str(threads)])
+    try:
+        ffargs = ['-y', '-f', outformat, '-acodec', acodec]
+        if encode_dif:
+            ffargs.extend(encode_dif)
+        ffargs.extend(['-vcodec', vcodec])
+        if encode_crf:
+            ffargs.extend(encode_crf)
+        if additional_ffmpeg:
+            ffargs.extend(additional_ffmpeg.split(" "))
+        if threads:
+            ffargs.extend(['-threads', str(threads)])
 
-    if temp_path:
-        print("Using temp_path...")
-        enc_resp = ffmpy.FFmpeg(
-            global_options="-v quiet -stats",
-            inputs={os.path.join(path, file): None},
-            outputs={os.path.join(temp_path, filename + ".temp"): ffargs}
-        ).run(stdout=subprocess.PIPE)
-        move_without_copying_stat(os.path.join(temp_path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
-    else:
-        print("Not using temp_path...")
-        enc_resp = ffmpy.FFmpeg(
-            global_options='-v quiet -stats',
-            inputs={os.path.join(path, file): None},
-            outputs={os.path.join(path, filename + u'.temp'): ffargs}
-        ).run(stdout=subprocess.PIPE)
-        move_without_copying_stat(os.path.join(path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
+        if temp_path:
+            print("Using temp_path...")
+            enc_resp = ffmpy.FFmpeg(
+                global_options="-v quiet -stats",
+                inputs={os.path.join(path, file): None},
+                outputs={os.path.join(temp_path, filename + ".temp"): ffargs}
+            ).run(stdout=subprocess.PIPE)
+            move_without_copying_stat(os.path.join(temp_path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
+        else:
+            print("Not using temp_path...")
+            enc_resp = ffmpy.FFmpeg(
+                global_options='-v quiet -stats',
+                inputs={os.path.join(path, file): None},
+                outputs={os.path.join(path, filename + u'.temp'): ffargs}
+            ).run(stdout=subprocess.PIPE)
+            move_without_copying_stat(os.path.join(path, filename + '.temp'), os.path.join(path, filename + '.' + outmode))
 
-    if strip_title:
-        print("Removing title metadata...")
-        striptitle_out = subprocess.check_output([atomicparsely_exe, os.path.join(path, filename + '.' + outmode),'--title','','--comment','','--overWrite'],stderr=subprocess.STDOUT)
-        print(striptitle_out)
+        if strip_title:
+            print("Removing title metadata...")
+            striptitle_out = subprocess.check_output([atomicparsley_exe, os.path.join(path, filename + '.' + outmode),'--title','','--comment','','--overWrite'],stderr=subprocess.STDOUT)
+            print("Result: " + striptitle_out.decode('UTF-8'))
 
-    # except Exception as e:
-        # print("Error: %s" % e)
-        # print("Removing temp file and skipping file")
-        # if temp_path:
-            # if os.path.isfile(os.path.join(temp_path, filename + '.temp')):
-                # os.remove(os.path.join(temp_path, filename + '.temp'))
-        # else:
-            # if os.path.isfile(os.path.join(path, filename + '.temp')):
-                # os.remove(os.path.join(path, filename + '.temp'))
-        # return
+    except Exception as e:
+        print("Error: %s" % e)
+        print("Removing temp file and skipping file")
+        if temp_path:
+            if os.path.isfile(os.path.join(temp_path, filename + '.temp')):
+                os.remove(os.path.join(temp_path, filename + '.temp'))
+        else:
+            if os.path.isfile(os.path.join(path, filename + '.temp')):
+                os.remove(os.path.join(path, filename + '.temp'))
+        return
 
     if extract_subtitle:
         sub_resp = ""
