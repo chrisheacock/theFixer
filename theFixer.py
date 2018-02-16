@@ -266,7 +266,7 @@ def process_file(path, file):
                                 print("Error: %s" % e)
                                 print("Deleting subtitle.")
                                 if os.path.isfile(os.path.join(path, filename + '.' + str(m["index"]) + '.' + m["tags"]["language"] + sub_ext)):
-                                    os.remove(re.escape(os.path.join(path, filename + '.' + str(m["index"]) + '.' + m["tags"]["language"] + sub_ext)))
+                                    os.remove(os.path.join(path, filename + '.' + str(m["index"]) + '.' + m["tags"]["language"] + sub_ext))
 
     if remover and filename + '.' + outmode != file:
         print("Deleting original file: " + file)
